@@ -1,0 +1,38 @@
+#
+# This file is dynamically generated.
+#
+User-Agent: *
+Allow: /$
+Allow: /home
+Allow: /about
+Allow: /api/*
+Allow: /assets/*
+Allow: /collections
+Allow: /mini-profiler-resources/*
+Allow: /resources/*
+Allow: /geniverse
+Allow: /inquiryspace
+Allow: /smartgraphs
+Allow: /sam
+Allow: /visual
+Allow: /udl
+Allow: /interactions
+Allow: /electron-technologies
+Allow: /nextgen-molecular-workbench
+Allow: /building-models
+Allow: /has
+Allow: /ipums-terra
+Allow: /sparks
+Allow: /connectedbio
+Allow: /itsi
+Allow: /tes-mmw
+Allow: /graph-literacy
+Allow: /geniventure
+Allow: /dynamic-data-science
+Allow: /health-in-our-hands
+Allow: /precipitating-change-public
+Allow: /rmath
+Allow: /earth
+Allow: /evolution
+Disallow: /
+Sitemap: https://learn.concord.org/sitemap.xml

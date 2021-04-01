@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html><head>
+
+    <!--  Modified for Geniverse. -->
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta id="viewport-meta" name="viewport" content="initial-scale=0.52375, minimum-scale=0.52375, maximum-scale=0.52375, user-scalable=no">
+    
+
+<script type="text/javascript">
+  document.write=function() {};
+  document.writeln=function() {};
+</script>
+
+<script type="text/javascript" async="" src="../ssl.google-analytics.com/ga.js"></script><script type="text/javascript">
+      function updateMetaViewport(){
+        var mvp = document.getElementById('viewport-meta');
+        var mvpScale = 1.0, mvpWidthScale = 1.0, mvpHeightScale = 1.0;
+        if (innerWidth < 1100){
+          mvpWidthScale = innerWidth/1100;
+        }
+        if (innerHeight < 800){
+          mvpHeightScale = innerHeight/800;
+        }
+        mvpScale = Math.min(mvpWidthScale, mvpHeightScale);
+        mvpWidth = innerWidth/mvpScale;
+
+        // using target-densitydpi=X is being removed from webkit,
+        // but the *-scale options are not supported by Dolphin or the webkit used by PhoneGap
+        // Chrome 18 on Android supports both options, Chrome >21 does not support target-densitydpi
+        // So for all Android browsers except chrome we'll use the target-densitydpi for now
+        // we might be able to improve this by using the webkit version on Android instead of !Chrome
+        if ( /Android/.exec(navigator.userAgent) && !/Chrome/.exec(navigator.userAgent)) {
+          // by default it is 160dpi
+          mvp.setAttribute('content', "target-densitydpi=" + 160/mvpScale +
+                                      ", initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no");
+
+        } else {
+          mvp.setAttribute('content', "initial-scale=" + mvpScale +
+                                      ", minimum-scale=" + mvpScale +
+                                      ", maximum-scale=" + mvpScale +
+                                      ", user-scalable=no");
+        }
+      }
+      updateMetaViewport();
+    </script>
+
+    <link rel="apple-touch-icon" href="static/sproutcore/foundation/en/760e3e0dd716bca963274213a64ff4ff49ea4636/images/sproutcore-logo.png">
+    <link rel="apple-touch-startup-image" media="screen and (orientation:portrait)" href="static/sproutcore/foundation/en/760e3e0dd716bca963274213a64ff4ff49ea4636/images/sproutcore-startup-portrait.png">
+    <link rel="apple-touch-startup-image" media="screen and (orientation:landscape)" href="static/sproutcore/foundation/en/760e3e0dd716bca963274213a64ff4ff49ea4636/images/sproutcore-startup-landscape.png">
+    <link rel="shortcut icon" href="static/lab/en/bf72c297ce97d03a2ea3d5d5cd469ea1026d2380/resources/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="../fonts.googleapis.com/css-family=Sofadi+One.css">
+
+    <title>Geniverse</title>
+  <script type="text/javascript">
+/* >>>>>>>>>> BEGIN source/core.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+/* >>>>>>>>>> BEGIN source/system/browser.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+var SC = SC || { BUNDLE_INFO: {}, LAZY_INSTANTIATION: {} };
+
+SC.browser = (function() {
+  var userAgent = navigator.userAgent.toLowerCase(),
+      version = (userAgent.match( /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/ ) || [])[1] ;
+
+  var browser = {
+    version: version,
+    safari: (/webkit/).test( userAgent ) ? version : 0,
+    opera: (/opera/).test( userAgent ) ? version : 0,
+    msie: (/msie/).test( userAgent ) && !(/opera/).test( userAgent ) ? version : 0,
+    mozilla: (/mozilla/).test( userAgent ) && !(/(compatible|webkit)/).test( userAgent ) ? version : 0,
+    mobileSafari: (/apple.*mobile.*safari/).test(userAgent) ? version : 0,
+    chrome: (/chrome/).test( userAgent ) ? version : 0,
+    windows: !!(/(windows)/).test(userAgent),
+    mac: !!((/(macintosh)/).test(userAgent) || (/(mac os x)/).test(userAgent)),
+    language: (navigator.language || navigator.browserLanguage).split('-', 1)[0]
+  };
+  
+    browser.current = browser.msie ? 'msie' : browser.mozilla ? 'mozilla' : browser.safari ? 'safari' : browser.opera ? 'opera' : 'unknown' ;
+  return browser ;
+})();
+
+/* >>>>>>>>>> BEGIN source/system/loader.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+// sc_require("system/browser");
+
+SC.bundleDidLoad = function(bundle) {
+  var info = this.BUNDLE_INFO[bundle] ;
+  if (!info) info = this.BUNDLE_INFO[bundle] = {} ;
+  info.loaded = true ;
+};
+
+SC.bundleIsLoaded = function(bundle) {
+  var info = this.BUNDLE_INFO[bundle] ;
+  return info ? !!info.loaded : false ;
+};
+
+SC.loadBundle = function() { throw "SC.loadBundle(): SproutCore is not loaded."; };
+
+SC.setupBodyClassNames = function() {
+  var el = document.body ;
+  if (!el) return ;
+  var browser, platform, shadows, borderRad, classNames, style;
+  browser = SC.browser.current ;
+  platform = SC.browser.windows ? 'windows' : SC.browser.mac ? 'mac' : 'other-platform' ;
+  style = document.documentElement.style;
+  shadows = (style.MozBoxShadow !== undefined) || 
+                (style.webkitBoxShadow !== undefined) ||
+                (style.oBoxShadow !== undefined) ||
+                (style.boxShadow !== undefined);
+  
+  borderRad = (style.MozBorderRadius !== undefined) || 
+              (style.webkitBorderRadius !== undefined) ||
+              (style.oBorderRadius !== undefined) ||
+              (style.borderRadius !== undefined);
+  
+  classNames = el.className ? el.className.split(' ') : [] ;
+  if(shadows) classNames.push('box-shadow');
+  if(borderRad) classNames.push('border-rad');
+  classNames.push(browser) ;
+  classNames.push(platform) ;
+  if (parseInt(SC.browser.msie,0)==7) classNames.push('ie7') ;
+  if (SC.browser.mobileSafari) classNames.push('mobile-safari') ;
+  if ('createTouch' in document) classNames.push('touch');
+  el.className = classNames.join(' ') ;
+} ;
+
+/* >>>>>>>>>> BEGIN bundle_loaded.js */
+; if ((typeof SC !== 'undefined') && SC && SC.bundleDidLoad) SC.bundleDidLoad('sproutcore/bootstrap');
+
+</script>
+<script type="text/javascript">SC.buildMode = "production_s3";</script>
+
+     <link href="static/geniverse/en/d4a0ac217d0f7c5ddb8ca2ce970cb93a5aab872c/stylesheet-packed.css" rel="stylesheet" type="text/css">
+  <link href="static/sproutcore/standard_theme/en/8b65428a7dcfa2226586b487bde1bf11560de2aa/stylesheet.css" rel="stylesheet" type="text/css">
+  <link href="static/lab/en/bf72c297ce97d03a2ea3d5d5cd469ea1026d2380/stylesheet.css" rel="stylesheet" type="text/css">
+   
+
+  </head>
+
+  <body class="sc-theme focus box-shadow border-rad unknown other-platform en sc-blur">
+
+
+
+<div id="sendButtonContainer" style="visibility: hidden;">button</div>
+
+  <script type="text/javascript" src="../geniverse-resources.concord.org/resources/js/jquery-1.4.4.min.js"></script>
+  <script type="text/javascript" src="../geniverse-resources.concord.org/resources/js/jquery-ui-1.8.4.custom.min.js"></script>
+  <script type="text/javascript" src="../geniverse-resources.concord.org/resources/js/raphael-min.js"></script>
+  <script type="text/javascript" src="../geniverse-resources.concord.org/resources/js/burst-core.js"></script>
+
+<script type="text/javascript">
+  window.CC_RESOURCES_BASE = "//geniverse-resources.concord.org";
+  window.CC_PORTAL_BASE = "https://learn.concord.org";
+  window.CC_RAILS_BACKEND_BASE = "https://learn.concord.org/geniverse";
+</script>
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-6899787-33']);
+  _gaq.push(['_trackPageview']);
+
+  window._gaq = _gaq;
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+<script type="text/javascript">
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+// sc_resource('setup_body_class_names'); // publish into inline format
+
+if (SC.setupBodyClassNames) SC.setupBodyClassNames() ;
+
+</script>
+
+
+
+
+
+  <script type="text/javascript" src="static/geniverse/en/d4a0ac217d0f7c5ddb8ca2ce970cb93a5aab872c/javascript-packed.js"></script>
+  <script type="text/javascript" src="static/lab/en/bf72c297ce97d03a2ea3d5d5cd469ea1026d2380/javascript.js"></script>
+<script type="text/javascript">String.preferredLanguage = "en";</script>
+  
+
+<div id="sc2950" class="sc-view sc-pane sc-main brown mainPane" style="left: 0px; right: 0px; min-width: 200px; top: 0px; bottom: 0px; min-height: 200px" alt="null"><div id="sc2951" class="sc-view mainscreen" style="left: 50%; width: 1890px; margin-left: -945px; top: 57px; height: 890px" alt="null"><a id="caselog" class="sc-view" style="left: 50%; width: 258px; margin-left: -100px; top: 614px; height: 172px" alt="null"></a><a id="door" class="sc-view hover" style="left: 50%; width: 302px; margin-left: 252px; top: 23px; height: 485px" alt="null"></a><a id="backdoor" class="sc-view" style="left: 50%; width: 39px; margin-left: 51px; top: 159px; height: 39px" alt="null"></a></div><div id="topBar" class="sc-view sc-toolbar-view brown-toolbar-view" style="left: 0px; right: 0px; top: 0px; height: 57px" alt="null"><img src="data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==" title="" alt="Home" id="homeButton" class="sc-view sc-image-view topbar-hint-available hint-target-bottomMiddle hint-tooltip-topMiddle hint-max-width-75 sc-static-layout sc-regular-size" style="left: 0px; width: 66px; top: 0px; height: 57px"><img src="data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==" title="" alt="Case Log" id="caselogButton" class="sc-view sc-image-view topbar-hint-available hint-target-bottomMiddle hint-tooltip-topMiddle hint-max-width-90 sc-static-layout sc-regular-size" style="left: 0px; width: 64px; top: 0px; height: 57px"><img src="data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==" title="" alt="Narrative introduction" id="introButton" class="sc-view sc-image-view topbar-hint-available hint-target-bottomMiddle hint-tooltip-topMiddle hint-max-width-175 sc-static-layout sc-regular-size" style="left: 0px; width: 57px; top: 0px; height: 57px"><div id="sc2959" class="sc-view pageTitle sc-static-layout" style="left: 0px; width: 220px; top: 0px; height: 57px" alt="null"><div id="caseLabel" class="sc-view sc-label-view sc-regular-size" style="left: 0px; right: 0px; top: 0px; bottom: 0px; text-align: left; font-weight: normal" alt="null"></div><div id="activityLabel" class="sc-view sc-label-view sc-regular-size" style="left: 0px; right: 0px; top: 30px; bottom: 0px; text-align: left; font-weight: normal; text-align: left; font-weight: normal" alt="null">Office</div></div><div id="sc2964" class="sc-view sc-label-view welcomeLabel sc-static-layout sc-regular-size" style="left: 0px; right: 0px; top: -12px; height: 24px; text-align: left; font-weight: normal; text-align: left; font-weight: normal" alt="null">Welcome to Geniverse, Bruce</div><div id="sc2967" class="sc-view sc-label-view groupLabel sc-static-layout sc-regular-size" style="left: 0px; right: 0px; top: -15px; height: 24px; text-align: left; font-weight: normal; text-align: left; font-weight: normal" alt="null">Member #5, Group #10</div><div id="changeGroupLabel" class="sc-view sc-label-view topbar-hint-available hint-target-bottomMiddle hint-tooltip-topMiddle sc-static-layout sc-regular-size" style="left: 0px; right: 0px; top: -15px; height: 24px; text-align: left; font-weight: normal" alt="Change your Member number or Group number." title="">edit</div><img src="data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==" title="" alt="Instructions" id="infoButton" class="topbar-hint-available hint-target-bottomMiddle hint-tooltip-topMiddle disabled hint-max-width-110 sc-static-layout sc-regular-size" style="left: 0px; width: 56px; top: 0px; height: 57px"><img src="data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==" title="" alt="Your notepad" id="notepadButton" class="sc-view sc-image-view topbar-hint-available hint-target-bottomMiddle hint-tooltip-topMiddle hint-max-width-120 sc-static-layout sc-regular-size" style="left: 0px; width: 50px; top: 0px; height: 57px"><img src="data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==" title="" alt="Post your claim to the class journal" id="blogButton" class="sc-view sc-image-view topbar-hint-available hint-target-bottomMiddle hint-tooltip-topMiddle hint-max-width-240 sc-static-layout sc-regular-size" style="left: 0px; width: 55px; top: 0px; height: 57px"><img src="data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==" title="" alt="Click here for help on any page." id="helpButton" class="sc-view sc-image-view topbar-hint-available topbar-hint-available-show hint-target-bottomMiddle hint-tooltip-topMiddle hint-max-width-220 sc-static-layout sc-regular-size" style="left: 0px; width: 56px; top: 0px; height: 57px"><div title="" alt="Access your unlocked items" role="button" id="unlockablesButton" class="sc-view sc-image-view sc-regular-size none sc-static-layout square" style="left: 0px; width: 45px; top: 0px; height: 57px"><span class="sc-button-inner" style="min-width:80px"><label class="sc-button-label ellipsis"></label></span></div><img src="data:image/gif;base64,R0lGODlhAQABAJAAAP///wAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==" title="" alt="Log out" id="logOutButton" class="sc-view sc-image-view topbar-hint-available hint-target-bottomMiddle hint-tooltip-topMiddle hint-max-width-85 sc-static-layout sc-regular-size" style="left: 0px; width: 67px; top: 0px; height: 57px"></div></div><div qtip="30" class="qtip qtip-defaults qtip-active" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; position: absolute; display: none; padding: 14px 0px 0px; width: 220px; top: -91px; left: 962.78125px; z-index: 6000;"><div class="qtip-tip" dir="ltr" rel="topMiddle" style="position: absolute; height: 14px; width: 14px; margin: 0px auto 0px -7px; line-height: 0.1px; font-size: 1px; top: 0px; left: 50%; display: block;"><canvas height="14" width="14"></canvas></div>  <div class="qtip-wrapper" style="position:relative; overflow:hidden; text-align:left;"><div class="qtip-borderTop" dir="ltr" style="height: 2px; margin-left: 2px; line-height: 0.1px; font-size: 1px; padding: 0px; display: block;"><div rel="topLeft" style="left:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div rel="topRight" style="right:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div class="qtip-betweenCorners" style="height: 2px; width: 216px; overflow: hidden; background-color: rgb(255, 255, 255); line-height: 0.1px; font-size: 1px;"></div></div>    <div class="qtip-contentWrapper" style="overflow: hidden; border-width: 0px 2px; border-style: solid; border-color: rgb(255, 255, 255);">       <div class="qtip-content qtip-content" style="color: rgb(255, 255, 255); overflow: hidden; text-align: left; padding: 14px;">Click here for help on any page.</div><div class="qtip-title" style="background-color: rgb(225, 225, 225); font-weight: bold; padding: 0px 12px; zoom: 0; background-position: initial initial; background-repeat: initial initial;"></div></div><div class="qtip-borderBottom" dir="ltr" style="height: 2px; margin-left: 2px; line-height: 0.1px; font-size: 1px; padding: 0px; display: block;"><div rel="bottomLeft" style="left:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div rel="bottomRight" style="right:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div class="qtip-betweenCorners" style="height: 2px; width: 216px; overflow: hidden; background-color: rgb(255, 255, 255); line-height: 0.1px; font-size: 1px;"></div></div></div></div><div qtip="31" class="qtip qtip-defaults qtip-active" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; position: absolute; display: none; padding: 14px 0px 0px; width: 220px; top: -91px; left: 962.78125px; z-index: 6001;"><div class="qtip-tip" dir="ltr" rel="topMiddle" style="position: absolute; height: 14px; width: 14px; margin: 0px auto 0px -7px; line-height: 0.1px; font-size: 1px; top: 0px; left: 50%; display: block;"><canvas height="14" width="14"></canvas></div>  <div class="qtip-wrapper" style="position:relative; overflow:hidden; text-align:left;"><div class="qtip-borderTop" dir="ltr" style="height: 2px; margin-left: 2px; line-height: 0.1px; font-size: 1px; padding: 0px; display: block;"><div rel="topLeft" style="left:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div rel="topRight" style="right:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div class="qtip-betweenCorners" style="height: 2px; width: 216px; overflow: hidden; background-color: rgb(255, 255, 255); line-height: 0.1px; font-size: 1px;"></div></div>    <div class="qtip-contentWrapper" style="overflow: hidden; border-width: 0px 2px; border-style: solid; border-color: rgb(255, 255, 255);">       <div class="qtip-content qtip-content" style="color: rgb(255, 255, 255); overflow: hidden; text-align: left; padding: 14px;">Click here for help on any page.</div><div class="qtip-title" style="background-color: rgb(225, 225, 225); font-weight: bold; padding: 0px 12px; zoom: 0; background-position: initial initial; background-repeat: initial initial;"></div></div><div class="qtip-borderBottom" dir="ltr" style="height: 2px; margin-left: 2px; line-height: 0.1px; font-size: 1px; padding: 0px; display: block;"><div rel="bottomLeft" style="left:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div rel="bottomRight" style="right:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div class="qtip-betweenCorners" style="height: 2px; width: 216px; overflow: hidden; background-color: rgb(255, 255, 255); line-height: 0.1px; font-size: 1px;"></div></div></div></div><div qtip="32" class="qtip qtip-defaults qtip-active" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; position: absolute; display: none; padding: 14px 0px 0px; width: 220px; top: -91px; left: 962.78125px; z-index: 6002;"><div class="qtip-tip" dir="ltr" rel="topMiddle" style="position: absolute; height: 14px; width: 14px; margin: 0px auto 0px -7px; line-height: 0.1px; font-size: 1px; top: 0px; left: 50%; display: block;"><canvas height="14" width="14"></canvas></div>  <div class="qtip-wrapper" style="position:relative; overflow:hidden; text-align:left;"><div class="qtip-borderTop" dir="ltr" style="height: 2px; margin-left: 2px; line-height: 0.1px; font-size: 1px; padding: 0px; display: block;"><div rel="topLeft" style="left:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div rel="topRight" style="right:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div class="qtip-betweenCorners" style="height: 2px; width: 216px; overflow: hidden; background-color: rgb(255, 255, 255); line-height: 0.1px; font-size: 1px;"></div></div>    <div class="qtip-contentWrapper" style="overflow: hidden; border-width: 0px 2px; border-style: solid; border-color: rgb(255, 255, 255);">       <div class="qtip-content qtip-content" style="color: rgb(255, 255, 255); overflow: hidden; text-align: left; padding: 14px;">Click here for help on any page.</div><div class="qtip-title" style="background-color: rgb(225, 225, 225); font-weight: bold; padding: 0px 12px; zoom: 0; background-position: initial initial; background-repeat: initial initial;"></div></div><div class="qtip-borderBottom" dir="ltr" style="height: 2px; margin-left: 2px; line-height: 0.1px; font-size: 1px; padding: 0px; display: block;"><div rel="bottomLeft" style="left:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div rel="bottomRight" style="right:0; position:absolute; height:2px; width:2px; overflow:hidden; line-height:0.1px; font-size:1px"><canvas height="2" width="2" style="vertical-align: top"></canvas></div><div class="qtip-betweenCorners" style="height: 2px; width: 216px; overflow: hidden; background-color: rgb(255, 255, 255); line-height: 0.1px; font-size: 1px;"></div></div></div></div></body></html>
